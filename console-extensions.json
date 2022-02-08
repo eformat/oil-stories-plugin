@@ -1,0 +1,20 @@
+[
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/oil-stories",
+      "component": { "$codeRef": "OilStoriesPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "oil-stories",
+      "name": "Open Innovation Lab Stories",
+      "href": "/oil-stories",
+      "perspective": "admin",
+      "section": "home"
+    }
+  }
+]
