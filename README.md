@@ -1,4 +1,31 @@
-# OpenShift Console Plugin Template
+# Open Innovation Labs Stories Web Console Plugin
+
+On a 4.10+ OpenShift cluster, deploy this dynamic console plugin:
+
+```bash
+oc process -f template.yaml \
+  -p PLUGIN_NAME=oil-stories-plugin \
+  -p NAMESPACE=oil-stories-plugin \
+  -p IMAGE=quay.io/eformat/oil-stories-plugin:latest \
+  | oc create -f -
+```
+
+```bash
+oc patch consoles.operator.openshift.io cluster \
+  --patch '{ "spec": { "plugins": ["oil-stories-plugin"] } }' --type=merge
+```
+
+You can build it locally using:
+
+```bash
+yarn install
+podman build -t quay.io/eformat/oil-stories-plugin:latest .
+podman push quay.io/eformat/oil-stories-plugin:latest .
+```
+
+The upstream [template docs](https://github.com/spadgett/console-plugin-template) follow ...
+
+## OpenShift Console Plugin Template
 
 This project is a minimal template for writing a new OpenShift Console dynamic
 plugin. It requires OpenShift 4.10.
