@@ -21,7 +21,7 @@ export default function OilStoriesPage() {
         <PageSection variant="light">
           <Title headingLevel="h1">Open Innovation Lab Stories</Title>
         </PageSection>
-        <iframe style = { style } src="https://eformat.github.io/rht-labs.github.io/stories"/>
+        <iframe style = { style } src="https://rht-labs.com/stories"/>
       </Page>
     </>
   );
