@@ -15,6 +15,8 @@ oc patch consoles.operator.openshift.io cluster \
   --patch '{ "spec": { "plugins": ["oil-stories-plugin"] } }' --type=merge
 ```
 
+![ocp-console-plugin-demo.png](ocp-console-plugin-demo.png)
+
 You can build it locally using:
 
 ```bash
