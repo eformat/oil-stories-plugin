@@ -15,7 +15,15 @@ oc patch consoles.operator.openshift.io cluster \
   --patch '{ "spec": { "plugins": ["oil-stories-plugin"] } }' --type=merge
 ```
 
+OR if using a GitOps approach and kustomize:
+
+```bash
+oc apply -k ./gitops
+```
+
 ![ocp-console-plugin-demo.png](ocp-console-plugin-demo.png)
+
+## Build image locally
 
 You can build it locally using:
 
@@ -24,6 +32,7 @@ yarn install
 podman build -t quay.io/eformat/oil-stories-plugin:latest .
 podman push quay.io/eformat/oil-stories-plugin:latest .
 ```
+
 
 The upstream [template docs](https://github.com/spadgett/console-plugin-template) follow ...
 

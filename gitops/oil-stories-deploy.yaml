@@ -1,0 +1,117 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: oil-stories-plugin
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      app: oil-stories-plugin
+      app.kubernetes.io/component: oil-stories-plugin
+      app.kubernetes.io/instance: oil-stories-plugin
+      app.kubernetes.io/part-of: oil-stories-plugin
+      app.openshift.io/runtime-namespace: oil-stories-plugin
+    name: oil-stories-plugin
+    namespace: oil-stories-plugin
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: oil-stories-plugin
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: oil-stories-plugin
+      spec:
+        containers:
+        - image: quay.io/eformat/oil-stories-plugin:latest
+          imagePullPolicy: Always
+          name: oil-stories-plugin
+          ports:
+          - containerPort: 9443
+            protocol: TCP
+          volumeMounts:
+          - mountPath: /var/serving-cert
+            name: plugin-serving-cert
+            readOnly: true
+          - mountPath: /etc/nginx/nginx.conf
+            name: nginx-conf
+            readOnly: true
+            subPath: nginx.conf
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: plugin-serving-cert
+          secret:
+            defaultMode: 420
+            secretName: plugin-serving-cert
+        - configMap:
+            defaultMode: 420
+            name: nginx-conf
+          name: nginx-conf
+- apiVersion: v1
+  data:
+    nginx.conf: |
+      error_log /dev/stdout info;
+      events {}
+      http {
+        access_log         /dev/stdout;
+        include            /etc/nginx/mime.types;
+        default_type       application/octet-stream;
+        keepalive_timeout  65;
+        server {
+          listen              9443 ssl;
+          ssl_certificate     /var/serving-cert/tls.crt;
+          ssl_certificate_key /var/serving-cert/tls.key;
+          root                /usr/share/nginx/html;
+        }
+      }
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: oil-stories-plugin
+      app.kubernetes.io/part-of: oil-stories-plugin
+    name: nginx-conf
+    namespace: oil-stories-plugin
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: plugin-serving-cert
+    labels:
+      app: oil-stories-plugin
+      app.kubernetes.io/component: oil-stories-plugin
+      app.kubernetes.io/instance: oil-stories-plugin
+      app.kubernetes.io/part-of: oil-stories-plugin
+    name: oil-stories-plugin
+    namespace: oil-stories-plugin
+  spec:
+    ports:
+    - name: 9443-tcp
+      port: 9443
+      protocol: TCP
+      targetPort: 9443
+    selector:
+      app: oil-stories-plugin
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: console.openshift.io/v1alpha1
+  kind: ConsolePlugin
+  metadata:
+    name: oil-stories-plugin
+  spec:
+    displayName: Console Plugin Template
+    service:
+      basePath: /
+      name: oil-stories-plugin
+      namespace: oil-stories-plugin
+      port: 9443
+kind: List
+metadata: {}
